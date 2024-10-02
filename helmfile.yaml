@@ -1,0 +1,68 @@
+repositories:
+  - name: jenkins
+    url: https://charts.jenkins.io
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+  - name: gitea-charts
+    url: https://dl.gitea.com/charts/
+  - name: harbor
+    url: https://helm.goharbor.io
+  - name: sonarqube
+    url: https://SonarSource.github.io/helm-chart-sonarqube
+  - name: argo
+    url: https://argoproj.github.io/argo-helm
+  - name: empathyco  
+    url : https://empathyco.github.io/helm-charts/
+
+releases:
+  - name: ingress-nginx
+    namespace: ingress-nginx
+    createNamespace: true
+    chart: ingress-nginx/ingress-nginx
+    version: 4.11.2
+    values:
+      - /home/goiaba/pipe_line/values/values.yaml
+
+  - name: jenkins
+    namespace: jenkins
+    createNamespace: true
+    chart: jenkins/jenkins
+    version: 5.6.5
+    values:
+      - /home/goiaba/pipe_line/values/jenkins/values.yaml
+
+  - name: gitea
+    namespace: gitea
+    createNamespace: true
+    chart: gitea-charts/gitea
+    version: 10.4.1
+    values:
+      - /home/goiaba/pipe_line/values/gitea/values.yaml
+  - name: harbor
+    namespace: harbor
+    createNamespace: true
+    chart: harbor/harbor
+    version: 1.15.1
+    values:
+      - /home/goiaba/pipe_line/values/harbor/values.yaml
+  - name: sonarqube
+    namespace: sonarqube
+    createNamespace: true
+    chart: sonarqube/sonarqube
+    version: 10.6.1+3163
+    values:
+    - /home/goiaba/pipe_line/values/values.yaml
+  - name: argo
+    namespace: argo
+    createNamespace: true
+    chart: argo/argo-cd
+    version: 7.6.5
+    values:
+    - /home/goiaba/pipe_line/values/argo/values.yaml
+  - name: empathyco
+    namespace: empathyco
+    createNamespace: true
+    chart: empathyco/imagepullsecret-patcher
+    version: 1.0.0
+    values:
+    - /home/goiaba/pipe_line/values/empathyco/values.yaml
