@@ -14,9 +14,10 @@ spec:
     args:
     - infinity
   hostAliases:
-  - ip "127.21.0.50"
+  - ip: "127.21.0.50"
     hostnames:
     - "gitea.localhost.com"
+
 '''
             // Can also wrap individual steps:
             // container('shell') {
