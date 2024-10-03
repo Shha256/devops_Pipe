@@ -2,14 +2,6 @@
 pipeline {
     agent {
         kubernetes {
-            // Rather than inline YAML, in a multibranch Pipeline you could use: yamlFile 'jenkins-pod.yaml'
-            // Or, to avoid YAML:
-            // containerTemplate {
-            //     name 'shell'
-            //     image 'ubuntu'
-            //     command 'sleep'
-            //     args 'infinity'
-            // }
             yaml '''
 apiVersion: v1
 kind: Pod
@@ -21,9 +13,10 @@ spec:
     - sleep
     args:
     - infinity
-    securityContext:
-      # ubuntu runs as root by default, it is recommended or even mandatory in some environments (such as pod security admission "restricted") to run as a non-root user.
-      runAsUser: 1000
+  hostAliases:
+  - ip "127.21.0.50"
+    hostnames:
+    - "gitea.localhost.com"
 '''
             // Can also wrap individual steps:
             // container('shell') {
