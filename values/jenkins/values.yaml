@@ -139,7 +139,7 @@ controller:
   targetPort: 8080
   # For minikube, set this to NodePort, elsewhere use LoadBalancer
   # Use ClusterIP if your setup includes ingress controller
-  serviceType: ClusterIP
+  serviceType: LoadBalancer
   # Use Local to preserve the client source IP and avoids a second hop for LoadBalancer and Nodeport type services,
   # but risks potentially imbalanced traffic spreading.
   serviceExternalTrafficPolicy:
@@ -255,7 +255,7 @@ controller:
     - kubernetes:4186.v1d804571d5d4
     - workflow-aggregator:596.v8c21c963d92d
     - git:5.2.1
-    - configuration-as-code:1775.v810dc950b_514
+    - configuration-as-code:1836.vccda_4a_122a_a_e
 
   # Set to false to download the minimum required version of all dependencies.
   installLatestPlugins: true
@@ -480,7 +480,7 @@ controller:
     # Set this path to jenkinsUriPrefix above or use annotations to rewrite path
     # path: "/jenkins"
     # configures the hostname e.g. jenkins.example.com
-    hostName: jenkins.localhost.com
+    hostName: "172.18.0.25"
     tls:
     # - secretName: jenkins.cluster.local
     #   hosts:

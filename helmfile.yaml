@@ -51,7 +51,7 @@ releases:
     chart: sonarqube/sonarqube
     version: 10.6.1+3163
     values:
-    - /home/goiaba/pipe_line/values/values.yaml
+    - /home/goiaba/devops_pipe/values/harbor/values.yaml
   - name: argo
     namespace: argo
     createNamespace: true
@@ -65,4 +65,4 @@ releases:
     chart: empathyco/imagepullsecret-patcher
     version: 1.0.0
     values:
-    - /home/goiaba/pipe_line/values/empathyco/values.yaml
+    - /home/goiaba/devops_pipe/values/empathyco/values.yaml
