@@ -107,7 +107,6 @@ service:
   ## @param service.http.loadBalancerSourceRanges Source range filter for http loadbalancer
   ## @param service.http.annotations HTTP service annotations
   ## @param service.http.labels HTTP service additional labels
-  ## @param service.http.loadBalancerClass Loadbalancer class
   http:
     type: ClusterIP
     port: 3000
@@ -121,7 +120,6 @@ service:
     loadBalancerSourceRanges: []
     annotations: {}
     labels: {}
-    loadBalancerClass:
   ## @param service.ssh.type Kubernetes service type for ssh traffic
   ## @param service.ssh.port Port number for ssh traffic
   ## @param service.ssh.clusterIP ClusterIP setting for ssh autosetup for deployment is None
@@ -135,7 +133,6 @@ service:
   ## @param service.ssh.loadBalancerSourceRanges Source range filter for ssh loadbalancer
   ## @param service.ssh.annotations SSH service annotations
   ## @param service.ssh.labels SSH service additional labels
-  ## @param service.ssh.loadBalancerClass Loadbalancer class
   ssh:
     type: ClusterIP
     port: 22
@@ -150,7 +147,6 @@ service:
     loadBalancerSourceRanges: []
     annotations: {}
     labels: {}
-    loadBalancerClass:
 
 ## @section Ingress
 ## @param ingress.enabled Enable ingress
@@ -327,7 +323,7 @@ initContainers:
 #
 ## @param signing.enabled Enable commit/action signing
 ## @param signing.gpgHome GPG home directory
-## @param signing.privateKey Inline private gpg key for signed internal Git activity
+## @param signing.privateKey Inline private gpg key for signed Gitea actions
 ## @param signing.existingSecret Use an existing secret to store the value of `signing.privateKey`
 signing:
   enabled: false
@@ -346,33 +342,21 @@ gitea:
   ## @param gitea.admin.existingSecret Use an existing secret to store admin user credentials
   ## @param gitea.admin.password Password for the Gitea admin user
   ## @param gitea.admin.email Email for the Gitea admin user
-  ## @param gitea.admin.passwordMode Mode for how to set/update the admin user password. Options are: initialOnlyNoReset, initialOnlyRequireReset, and keepUpdated
   admin:
     # existingSecret: gitea-admin-secret
     existingSecret:
     username: gitea_admin
     password: r8sA8CPHD9!bt6d
     email: "gitea@local.domain"
-    passwordMode: keepUpdated
 
   ## @param gitea.metrics.enabled Enable Gitea metrics
-  ## @param gitea.metrics.serviceMonitor.enabled Enable Gitea metrics service monitor. Requires, that `gitea.metrics.enabled` is also set to true, to enable metrics generally.
-  ## @param gitea.metrics.serviceMonitor.interval Interval at which metrics should be scraped. If not specified Prometheus' global scrape interval is used.
-  ## @param gitea.metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping.
-  ## @param gitea.metrics.serviceMonitor.scheme HTTP scheme to use for scraping. For example `http` or `https`. Default is http.
-  ## @param gitea.metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended. If not specified, global Prometheus scrape timeout is used.
-  ## @param gitea.metrics.serviceMonitor.tlsConfig TLS configuration to use when scraping the metric endpoint by Prometheus.
+  ## @param gitea.metrics.serviceMonitor.enabled Enable Gitea metrics service monitor
   metrics:
     enabled: false
     serviceMonitor:
       enabled: false
       #  additionalLabels:
       #    prometheus-release: prom1
-      interval: ""
-      relabelings: []
-      scheme: ""
-      scrapeTimeout: ""
-      tlsConfig: {}
 
   ## @param gitea.ldap LDAP configuration
   ldap:
@@ -415,6 +399,8 @@ gitea:
     server:
       SSH_PORT: 22 # rootful image
       SSH_LISTEN_PORT: 2222 # rootless image
+    webhook:
+      ALLOWED_HOST_LIST: jenkins.jenkins.svc.cluster.local
   #
   #  security:
   #    PASSWORD_COMPLEXITY: spec
@@ -497,15 +483,10 @@ gitea:
     failureThreshold: 10
 
 ## @section redis-cluster
-## @param redis-cluster.enabled Enable redis cluster
-# ⚠️ The redis charts do not work well with special characters in the password (<https://gitea.com/gitea/helm-chart/issues/690>).
-# Consider omitting such or open an issue in the Bitnami repo and let us know once this got fixed.
+## @param redis-cluster.enabled Enable redis
 ## @param redis-cluster.usePassword Whether to use password authentication
 ## @param redis-cluster.cluster.nodes Number of redis cluster master nodes
 ## @param redis-cluster.cluster.replicas Number of redis cluster master node replicas
-## @descriptionStart
-## Redis cluster and [Redis](#redis) cannot be enabled at the same time.
-## @descriptionEnd
 redis-cluster:
   enabled: false
   usePassword: false
@@ -513,28 +494,9 @@ redis-cluster:
     nodes: 3 # default: 6
     replicas: 0 # default: 1
 
-## @section redis
-## @param redis.enabled Enable redis standalone or replicated
-## @param redis.architecture Whether to use standalone or replication
-# ⚠️ The redis charts do not work well with special characters in the password (<https://gitea.com/gitea/helm-chart/issues/690>).
-# Consider omitting such or open an issue in the Bitnami repo and let us know once this got fixed.
-## @param redis.global.redis.password Required password
-## @param redis.master.count Number of Redis master instances to deploy
-## @descriptionStart
-## Redis and [Redis cluster](#redis-cluster) cannot be enabled at the same time.
-## @descriptionEnd
-redis:
-  enabled: false
-  architecture: standalone
-  global:
-    redis:
-      password: changeme
-  master:
-    count: 1
-
-## @section PostgreSQL HA
+## @section postgresql-ha
 #
-## @param postgresql-ha.enabled Enable PostgreSQL HA
+## @param postgresql-ha.enabled Enable postgresql-ha
 ## @param postgresql-ha.postgresql.password Password for the `gitea` user (overrides `auth.password`)
 ## @param postgresql-ha.global.postgresql.database Name for a custom database to create (overrides `auth.database`)
 ## @param postgresql-ha.global.postgresql.username Name for a custom user to create (overrides `auth.username`)
@@ -542,8 +504,8 @@ redis:
 ## @param postgresql-ha.postgresql.repmgrPassword Repmgr Password
 ## @param postgresql-ha.postgresql.postgresPassword postgres Password
 ## @param postgresql-ha.pgpool.adminPassword pgpool adminPassword
-## @param postgresql-ha.service.ports.postgresql PostgreSQL service port (overrides `service.ports.postgresql`)
-## @param postgresql-ha.persistence.size PVC Storage Request for PostgreSQL HA volume
+## @param postgresql-ha.service.ports.postgresql postgresql service port (overrides `service.ports.postgresql`)
+## @param postgresql-ha.primary.persistence.size PVC Storage Request for postgresql-ha volume
 postgresql-ha:
   global:
     postgresql:
@@ -560,8 +522,9 @@ postgresql-ha:
   service:
     ports:
       postgresql: 5432
-  persistence:
-    size: 10Gi
+  primary:
+    persistence:
+      size: 10Gi
 
 ## @section PostgreSQL
 #

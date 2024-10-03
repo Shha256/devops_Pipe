@@ -21,7 +21,7 @@ releases:
     chart: ingress-nginx/ingress-nginx
     version: 4.11.2
     values:
-      - /home/goiaba/pipe_line/values/values.yaml
+      - /home/goiaba/devops_pipe/values/ingress-nginx/values.yaml
 
   - name: jenkins
     namespace: jenkins
@@ -29,7 +29,7 @@ releases:
     chart: jenkins/jenkins
     version: 5.6.5
     values:
-      - /home/goiaba/pipe_line/values/jenkins/values.yaml
+      - /home/goiaba/devops_pipe/values/jenkins/values.yaml
 
   - name: gitea
     namespace: gitea
@@ -37,7 +37,7 @@ releases:
     chart: gitea-charts/gitea
     version: 10.4.1
     values:
-      - /home/goiaba/pipe_line/values/gitea/values.yaml
+      - /home/goiaba/devops_pipe/values/gitea/values.yaml
   - name: harbor
     namespace: harbor
     createNamespace: true
