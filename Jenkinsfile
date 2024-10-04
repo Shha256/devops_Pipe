@@ -7,8 +7,8 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: shell
-    image: ubuntu
+  - name: python
+    image: python:3.9.12-alpine3.15
     command:
     - sleep
     args:
@@ -19,20 +19,24 @@ spec:
     - "gitea.localhost.com"
 
 '''
-            // Can also wrap individual steps:
-            // container('shell') {
-            //     sh 'hostname'
-            // }
-            defaultContainer 'shell'
-            retries 2
+         
+          //  defaultContainer 'shell'
+          //  retries 2
         }
     }
+}
     stages {
-        stage('Main') {
+        stage('Unit teste') {
+            container('python')
             steps {
-                sh 'hostname'
-                sh 'ls -l'
-            }
+                sh '''
+                pip install -r requirements.txt
+                bandit -r . -x '/.venv/','/tests/'
+                black .
+                flake8 . --exclude .venv
+                pytest -v --disable-warnings
+
+
         }
     }
 }
