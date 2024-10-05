@@ -28,9 +28,8 @@ spec:
                     pip install -r app/requirements.txt
                     bandit -r . -x '/.venv/','/tests/'
                     black .
-                    flake8 . --exclude .venv
-                    pytest -v --disable-warnings
                     flake8 . --exclude .venv --ignore=E501
+                    pytest -v --disable-warnings
                     '''
                 }
             }
