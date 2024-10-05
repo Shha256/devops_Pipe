@@ -25,7 +25,7 @@ spec:
             steps {
                 container('python') {
                     sh '''
-                    pip install -r requirements.txt
+                    pip install -r app/requirements.txt
                     bandit -r . -x '/.venv/','/tests/'
                     black .
                     flake8 . --exclude .venv
