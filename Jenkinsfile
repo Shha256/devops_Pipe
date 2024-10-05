@@ -30,6 +30,7 @@ spec:
                     black .
                     flake8 . --exclude .venv
                     pytest -v --disable-warnings
+                    flake8 . --exclude .venv --ignore=E501
                     '''
                 }
             }
