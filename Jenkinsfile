@@ -1,3 +1,3 @@
-@Library('jenkins-shared-li braries')
+@Library('jenkins-shared-libraries')
 
 pythonPipeline {}
