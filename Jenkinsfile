@@ -1,11 +1,8 @@
 pipeline {
     agent {
         kubernetes {
-<<<<<<< HEAD
-            yamlFile 'Jenkinsfile.yaml'
-=======
+
             yamlFile 'jenkinspod.yaml'
->>>>>>> feature-vraus
 
 
         }
